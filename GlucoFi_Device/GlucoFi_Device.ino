@@ -156,9 +156,9 @@ int calculate_hr() {
 int calculate_spo2(){
   //Arduino Uno doesn't have enough SRAM to store 100 samples of IR led data and red led data in 32-bit format
   //To solve this problem, 16-bit MSB of the sampled data will be truncated. Samples become 16-bit data.
-  uint16_t irBuffer[100]; //infrared LED sensor data
-  uint16_t redBuffer[100];  //red LED sensor data
-
+  uint16_t irBuffer[50]; //infrared LED sensor data
+  uint16_t redBuffer[50];  //red LED sensor data
+  
 
   int32_t bufferLength; //data length
   int32_t spo2; //SPO2 value
@@ -173,7 +173,7 @@ int calculate_spo2(){
   byte sampleRate = 100; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
   int pulseWidth = 411; //Options: 69, 118, 215, 411
   int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
-  bufferLength = 100; //buffer length of 100 stores 4 seconds of samples running at 25sps
+  bufferLength = 50; //buffer length of 100 stores 4 seconds of samples running at 25sps
   start1=millis();
   current=start1;
   particleSensor.wakeUp();
