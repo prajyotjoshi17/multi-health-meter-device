@@ -51,7 +51,7 @@ class MAX30105 {
 
   uint32_t getRed(void); //Returns immediate red value
   uint32_t getIR(void); //Returns immediate IR value
-  uint32_t getGreen(void); //Returns immediate green value
+  //uint32_t getGreen(void); //Returns immediate green value
   bool safeCheck(uint8_t maxTimeToCheck); //Given a max amount of time, check for new data
 
   // Configuration
@@ -67,7 +67,7 @@ class MAX30105 {
 
   void setPulseAmplitudeRed(uint8_t value);
   void setPulseAmplitudeIR(uint8_t value);
-  void setPulseAmplitudeGreen(uint8_t value);
+  //void setPulseAmplitudeGreen(uint8_t value);
   void setPulseAmplitudeProximity(uint8_t value);
 
   void setProximityThreshold(uint8_t threshMSB);
@@ -104,7 +104,7 @@ class MAX30105 {
   void nextSample(void); //Advances the tail of the sense array
   uint32_t getFIFORed(void); //Returns the FIFO sample pointed to by tail
   uint32_t getFIFOIR(void); //Returns the FIFO sample pointed to by tail
-  uint32_t getFIFOGreen(void); //Returns the FIFO sample pointed to by tail
+  //uint32_t getFIFOGreen(void); //Returns the FIFO sample pointed to by tail
 
   uint8_t getWritePointer(void);
   uint8_t getReadPointer(void);
@@ -146,7 +146,7 @@ class MAX30105 {
   {
     uint32_t red[STORAGE_SIZE];
     uint32_t IR[STORAGE_SIZE];
-    uint32_t green[STORAGE_SIZE];
+    //uint32_t green[STORAGE_SIZE];
     byte head;
     byte tail;
   } sense_struct; //This is our circular buffer of readings from the sensor

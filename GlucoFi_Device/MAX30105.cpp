@@ -127,11 +127,11 @@ static const uint8_t MAX30105_SLOT4_MASK = 		0x8F;
 static const uint8_t SLOT_NONE = 				0x00;
 static const uint8_t SLOT_RED_LED = 			0x01;
 static const uint8_t SLOT_IR_LED = 				0x02;
-static const uint8_t SLOT_GREEN_LED = 			0x03;
+//static const uint8_t SLOT_GREEN_LED = 			0x03;
 static const uint8_t SLOT_NONE_PILOT = 			0x04;
 static const uint8_t SLOT_RED_PILOT =			0x05;
 static const uint8_t SLOT_IR_PILOT = 			0x06;
-static const uint8_t SLOT_GREEN_PILOT = 		0x07;
+//static const uint8_t SLOT_GREEN_PILOT = 		0x07;
 
 static const uint8_t MAX_30105_EXPECTEDPARTID = 0x15;
 
@@ -268,9 +268,9 @@ void MAX30105::setPulseAmplitudeIR(uint8_t amplitude) {
   writeRegister8(_i2caddr, MAX30105_LED2_PULSEAMP, amplitude);
 }
 
-void MAX30105::setPulseAmplitudeGreen(uint8_t amplitude) {
-  writeRegister8(_i2caddr, MAX30105_LED3_PULSEAMP, amplitude);
-}
+// void MAX30105::setPulseAmplitudeGreen(uint8_t amplitude) {
+//   writeRegister8(_i2caddr, MAX30105_LED3_PULSEAMP, amplitude);
+// }
 
 void MAX30105::setPulseAmplitudeProximity(uint8_t amplitude) {
   writeRegister8(_i2caddr, MAX30105_LED_PROX_AMP, amplitude);
@@ -497,7 +497,7 @@ void MAX30105::setup(byte powerLevel, byte sampleAverage, byte ledMode, int samp
 
   setPulseAmplitudeRed(powerLevel);
   setPulseAmplitudeIR(powerLevel);
-  setPulseAmplitudeGreen(powerLevel);
+  //setPulseAmplitudeGreen(powerLevel);
   setPulseAmplitudeProximity(powerLevel);
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -505,7 +505,7 @@ void MAX30105::setup(byte powerLevel, byte sampleAverage, byte ledMode, int samp
   //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   enableSlot(1, SLOT_RED_LED);
   if (ledMode > 1) enableSlot(2, SLOT_IR_LED);
-  if (ledMode > 2) enableSlot(3, SLOT_GREEN_LED);
+  //if (ledMode > 2) enableSlot(3, SLOT_GREEN_LED);
   //enableSlot(1, SLOT_RED_PILOT);
   //enableSlot(2, SLOT_IR_PILOT);
   //enableSlot(3, SLOT_GREEN_PILOT);
@@ -546,7 +546,7 @@ uint32_t MAX30105::getIR(void)
   else
     return(0); //Sensor failed to find new data
 }
-
+/*
 //Report the most recent Green value
 uint32_t MAX30105::getGreen(void)
 {
@@ -556,7 +556,7 @@ uint32_t MAX30105::getGreen(void)
   else
     return(0); //Sensor failed to find new data
 }
-
+*/
 //Report the next Red value in the FIFO
 uint32_t MAX30105::getFIFORed(void)
 {
@@ -568,13 +568,13 @@ uint32_t MAX30105::getFIFOIR(void)
 {
   return (sense.IR[sense.tail]);
 }
-
+/*
 //Report the next Green value in the FIFO
 uint32_t MAX30105::getFIFOGreen(void)
 {
   return (sense.green[sense.tail]);
 }
-
+*/
 //Advance the tail
 void MAX30105::nextSample(void)
 {
@@ -672,7 +672,7 @@ uint16_t MAX30105::check(void)
 		  sense.IR[sense.head] = tempLong;
         }
 
-        if (activeLEDs > 2)
+        /*if (activeLEDs > 2)
         {
           //Burst read three more bytes - Green
           temp[3] = 0;
@@ -686,7 +686,7 @@ uint16_t MAX30105::check(void)
 		  tempLong &= 0x3FFFF; //Zero out all but 18 bits
 
           sense.green[sense.head] = tempLong;
-        }
+        }*/
 
         toGet -= activeLEDs * 3;
       }
