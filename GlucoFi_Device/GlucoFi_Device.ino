@@ -34,8 +34,8 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(">"); //TODO: Remove later
-  establishContact();
+  //Serial.println(">"); //TODO: Remove later
+  //establishContact();
   if (Serial.available() > 0) {
     input = Serial.read();
     switch (input) {
@@ -72,7 +72,7 @@ void establishContact() {
 void print_result(int result){
   switch(result){
     case 1:
-      Serial.println("Done");
+      //Serial.println("Done");
       break;
     case 2:
       Serial.println(ERROR2);
@@ -146,7 +146,7 @@ int calculate_hr() {
     }
   
   }
-  Serial.print(" Avg BPM:");
+  //Serial.print(" Avg BPM:");
   Serial.println(beatAvg);
 
   particleSensor.shutDown(); //Put sensor to low power mode after specified time
@@ -156,9 +156,9 @@ int calculate_hr() {
 int calculate_spo2(){
   //Arduino Uno doesn't have enough SRAM to store 100 samples of IR led data and red led data in 32-bit format
   //To solve this problem, 16-bit MSB of the sampled data will be truncated. Samples become 16-bit data.
-  uint16_t irBuffer[100]; //infrared LED sensor data
-  uint16_t redBuffer[100];  //red LED sensor data
-
+  uint16_t irBuffer[50]; //infrared LED sensor data
+  uint16_t redBuffer[50];  //red LED sensor data
+  
 
   int32_t bufferLength; //data length
   int32_t spo2; //SPO2 value
@@ -173,7 +173,7 @@ int calculate_spo2(){
   byte sampleRate = 100; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
   int pulseWidth = 411; //Options: 69, 118, 215, 411
   int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
-  bufferLength = 100; //buffer length of 100 stores 4 seconds of samples running at 25sps
+  bufferLength = 50; //buffer length of 100 stores 4 seconds of samples running at 25sps
   start1=millis();
   current=start1;
   particleSensor.wakeUp();
@@ -208,7 +208,7 @@ int calculate_spo2(){
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
     //Serial.print(spo2);
   }
-  Serial.print("Spo2: ");
+  //Serial.print("Spo2: ");
   Serial.println(spo2);
   particleSensor.shutDown();
   return 1;
@@ -216,18 +216,33 @@ int calculate_spo2(){
 
 int calculate_glu(){
   int glu=0;
-  start1=millis();
-  current=start1;
-  while((current-start1)<60000){
-    glu=random(100,120);
-    Serial.print(" Glu:");
-    Serial.println(glu);
-    current=millis();
-
-    delay(1000);
-    if(Serial.read()=='X')
-      return 3;
+  bool validGlu=0;
+//  start1=millis();
+//  current=start1;
+//  while((current-start1)<60000){
+//    glu=random(100,120);
+//    Serial.print(" Glu:");
+//    Serial.println(glu);
+//    current=millis();
+//
+//    delay(1000);
+//    if(Serial.read()=='X')
+//      return 3;
+//  }
+  while(validGlu==0){
+    glu=analogRead(A3);
+    if(glu>100){
+      Serial.println(F("No Finger"));
+      break;
+    }
+    else{
+      glu=glu*15;
+      glu=(3*pow(10,-5)*pow(glu,2)) + (0.2903*glu)-4.798;
+      Serial.println(glu);
+      break;
+    }
   }
+  
   return 1;
 
 }
