@@ -2,9 +2,9 @@
 #include "heartRate.h"
 #include "spo2_algorithm.h"
 //Error mesages
-#define ERROR1 "MAX30105 was not found."
-#define ERROR2 " No finger "
-#define ERROR3 "Stopped"
+#define ERROR1 F("MAX30105 was not found.")
+#define ERROR2 F(" No finger ")
+#define ERROR3 F("Stopped")
 
 char input = 'Z';
 int result = 0;
@@ -57,7 +57,7 @@ void loop() {
         break;
       default:
         Serial.print(input);
-        Serial.println("Error");
+        Serial.println(F("Error"));
     }
   }
 }
@@ -231,6 +231,7 @@ int calculate_glu(){
 //  }
   while(validGlu==0){
     glu=analogRead(A3);
+    //Serial.println(glu);
     if(glu>100){
       Serial.println(F("No Finger"));
       break;
