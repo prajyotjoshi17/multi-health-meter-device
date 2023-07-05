@@ -34,8 +34,8 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(">"); //TODO: Remove later
-  establishContact();
+  //Serial.println(">"); //TODO: Remove later
+  //establishContact();
   if (Serial.available() > 0) {
     input = Serial.read();
     switch (input) {
@@ -72,7 +72,7 @@ void establishContact() {
 void print_result(int result){
   switch(result){
     case 1:
-      Serial.println("Done");
+      //Serial.println("Done");
       break;
     case 2:
       Serial.println(ERROR2);
@@ -146,7 +146,7 @@ int calculate_hr() {
     }
   
   }
-  Serial.print(" Avg BPM:");
+  //Serial.print(" Avg BPM:");
   Serial.println(beatAvg);
 
   particleSensor.shutDown(); //Put sensor to low power mode after specified time
@@ -208,7 +208,7 @@ int calculate_spo2(){
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
     //Serial.print(spo2);
   }
-  Serial.print("Spo2: ");
+  //Serial.print("Spo2: ");
   Serial.println(spo2);
   particleSensor.shutDown();
   return 1;
@@ -216,18 +216,33 @@ int calculate_spo2(){
 
 int calculate_glu(){
   int glu=0;
-  start1=millis();
-  current=start1;
-  while((current-start1)<60000){
-    glu=random(100,120);
-    Serial.print(" Glu:");
-    Serial.println(glu);
-    current=millis();
-
-    delay(1000);
-    if(Serial.read()=='X')
-      return 3;
+  bool validGlu=0;
+//  start1=millis();
+//  current=start1;
+//  while((current-start1)<60000){
+//    glu=random(100,120);
+//    Serial.print(" Glu:");
+//    Serial.println(glu);
+//    current=millis();
+//
+//    delay(1000);
+//    if(Serial.read()=='X')
+//      return 3;
+//  }
+  while(validGlu==0){
+    glu=analogRead(A3);
+    if(glu>100){
+      Serial.println(F("No Finger"));
+      break;
+    }
+    else{
+      glu=glu*15;
+      glu=(3*pow(10,-5)*pow(glu,2)) + (0.2903*glu)-4.798;
+      Serial.println(glu);
+      break;
+    }
   }
+  
   return 1;
 
 }
