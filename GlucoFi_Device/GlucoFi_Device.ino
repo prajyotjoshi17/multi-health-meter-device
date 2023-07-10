@@ -124,7 +124,7 @@ int calculate_hr() {
         rates[rateSpot] = (byte)beatsPerMinute; //Store this reading in the array
         rateSpot %= RATE_SIZE; //Wrap variable
         //Serial.print(beatsPerMinute);
-        Serial.print(" ");
+        //Serial.print(" ");
         //Take average of readings
         rateSpot++;
       }
