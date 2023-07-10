@@ -30,10 +30,11 @@ void setup() {
     while (1);
   }
   particleSensor.shutDown(); //Put Module to low power mode
-
+  pinMode(3,OUTPUT);
 }
 
 void loop() {
+  input='Z';
   //Serial.println(">"); //TODO: Remove later
   //establishContact();
   if (Serial.available() > 0) {
@@ -60,6 +61,7 @@ void loop() {
         Serial.println(F("Error"));
     }
   }
+
 }
 
 void establishContact() {
@@ -91,8 +93,8 @@ int calculate_hr() {
   long lastBeat = 0; //Time at which the last beat occurred
 
   float beatsPerMinute;
-  int beatAvg;
-
+  int beatAvg=0;
+  
   particleSensor.wakeUp();//Put Module out of Low power mode
   //Serial.println("Place your index finger on the sensor with steady pressure.");
 
@@ -102,7 +104,7 @@ int calculate_hr() {
   start1=millis();
   current=start1;
 
-  while ((current-start1)<6000) {
+  while (rateSpot<10/*(current-start1)<6000*/) {
     long irValue = particleSensor.getIR();
     if (irValue < 10000)
     {
@@ -119,17 +121,24 @@ int calculate_hr() {
 
       if (beatsPerMinute < 255 && beatsPerMinute > 20)
       {
-        rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
+        rates[rateSpot] = (byte)beatsPerMinute; //Store this reading in the array
         rateSpot %= RATE_SIZE; //Wrap variable
-
+        //Serial.print(beatsPerMinute);
+        Serial.print(" ");
         //Take average of readings
-        beatAvg = 0;
-        for (byte x = 0 ; x < RATE_SIZE ; x++)
-          beatAvg += rates[x];
-        beatAvg /= RATE_SIZE;
+        rateSpot++;
       }
     }
-
+    current=millis();
+  }
+  //Serial.println();
+  for (byte x = 0 ; x < RATE_SIZE ; x++)
+  {
+    beatAvg += rates[x];
+    //Serial.print(beatAvg);
+    //Serial.print(" ");
+  }
+  beatAvg /= RATE_SIZE;
   //Serial.print("BPM:");
   //Serial.print(beatsPerMinute);
   //Serial.print(" Avg BPM:");
@@ -145,7 +154,7 @@ int calculate_hr() {
       return 2;
     }
   
-  }
+
   //Serial.print(" Avg BPM:");
   Serial.println(beatAvg);
 
@@ -180,8 +189,8 @@ int calculate_spo2(){
   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 
   //read the first 100 samples, and determine the signal range
-  while(validSPO2!=1){
-    for (byte i = 0 ; i < bufferLength && (current-start1)<60000 ; i++)
+  while(validSPO2!=1 && (current-start1)<60000){
+    for (byte i = 0 ; i < bufferLength ; i++)
     {
       while (particleSensor.available() == false) //do we have new data?
         particleSensor.check(); //Check the sensor for new data
@@ -217,33 +226,34 @@ int calculate_spo2(){
 int calculate_glu(){
   int glu=0;
   bool validGlu=0;
-//  start1=millis();
-//  current=start1;
-//  while((current-start1)<60000){
-//    glu=random(100,120);
-//    Serial.print(" Glu:");
-//    Serial.println(glu);
-//    current=millis();
-//
-//    delay(1000);
-//    if(Serial.read()=='X')
-//      return 3;
-//  }
+  digitalWrite(3, HIGH);
+  long int avg = 0;
+
   while(validGlu==0){
-    glu=analogRead(A3);
-    //Serial.println(glu);
-    if(glu>100){
-      Serial.println(F("No Finger"));
-      break;
+    avg=0;
+    for(int i=0;i<100;i++){
+      glu=analogRead(A3);
+      //Serial.println(glu);
+      if(glu>100){
+        digitalWrite(3, LOW);
+        return 2;
+      }
+      else{
+        glu=glu*15;
+        glu=(3*pow(10,-5)*pow(glu,2)) + (0.2903*glu)-4.798;
+        //Serial.println(glu);
+        avg=avg+glu;
+      }
     }
-    else{
-      glu=glu*15;
-      glu=(3*pow(10,-5)*pow(glu,2)) + (0.2903*glu)-4.798;
-      Serial.println(glu);
-      break;
+    //Serial.println(avg);
+    avg=avg/100;
+    //Serial.println(glu);
+    if(avg>80 && avg<200){
+      validGlu=1;
     }
   }
-  
+  Serial.println(avg);
+  digitalWrite(3, LOW);
   return 1;
 
 }
