@@ -22,15 +22,16 @@ MAX30105 particleSensor;
 
 void setup() {
   Serial.begin(9600);
-  
+  //Serial.println("setup...");
    // Initialize sensor
   if (!particleSensor.begin(Wire)) //Use default I2C port, 400kHz speed
   {
     Serial.println(ERROR1);
     while (1);
   }
+
   particleSensor.shutDown(); //Put Module to low power mode
-  pinMode(3,OUTPUT);
+  pinMode(13,OUTPUT);
 }
 
 void loop() {
@@ -189,7 +190,7 @@ int calculate_spo2(){
   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 
   //read the first 100 samples, and determine the signal range
-  while(validSPO2!=1 && (current-start1)<60000){
+  while(validSPO2!=1 /*&& (current-start1)60000*/){
     for (byte i = 0 ; i < bufferLength ; i++)
     {
       while (particleSensor.available() == false) //do we have new data?
@@ -208,16 +209,13 @@ int calculate_spo2(){
         particleSensor.shutDown();
         return 3;
       }
-      //Serial.print(F("red="));
-      //Serial.print(redBuffer[i], DEC);
-      //Serial.print(F(", ir="));
-      //Serial.println(irBuffer[i], DEC);
     }
     //calculate heart rate and SpO2 after first 100 samples (first 4 seconds of samples)  
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
     //Serial.print(spo2);
+    //Serial.print(" ");
+    //current=millis();
   }
-  //Serial.print("Spo2: ");
   Serial.println(spo2);
   particleSensor.shutDown();
   return 1;
@@ -226,16 +224,16 @@ int calculate_spo2(){
 int calculate_glu(){
   int glu=0;
   bool validGlu=0;
-  digitalWrite(3, HIGH);
+  digitalWrite(13, HIGH);
   long int avg = 0;
 
   while(validGlu==0){
     avg=0;
     for(int i=0;i<100;i++){
-      glu=analogRead(A3);
+      glu=analogRead(A2);
       //Serial.println(glu);
       if(glu>100){
-        digitalWrite(3, LOW);
+        digitalWrite(13, LOW);
         return 2;
       }
       else{
@@ -253,7 +251,7 @@ int calculate_glu(){
     }
   }
   Serial.println(avg);
-  digitalWrite(3, LOW);
+  digitalWrite(13, LOW);
   return 1;
 
 }
