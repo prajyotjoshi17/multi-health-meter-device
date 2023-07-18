@@ -217,6 +217,8 @@ int calculate_spo2(){
     //current=millis();
   }
   Serial.println(spo2);
+  free(redBuffer);
+  free(irBuffer);
   particleSensor.shutDown();
   return 1;
 }
@@ -237,11 +239,12 @@ int calculate_glu(){
         return 2;
       }
       else{
-        glu=glu*15;
+        glu=glu*19;
         glu=(3*pow(10,-5)*pow(glu,2)) + (0.2903*glu)-4.798;
         //Serial.println(glu);
         avg=avg+glu;
       }
+      delay(100);
     }
     //Serial.println(avg);
     avg=avg/100;
