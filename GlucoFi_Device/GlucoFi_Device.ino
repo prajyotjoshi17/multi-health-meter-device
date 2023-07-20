@@ -212,7 +212,7 @@ int calculate_spo2(){
     }
     //calculate heart rate and SpO2 after first 100 samples (first 4 seconds of samples)  
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
-    //Serial.print(spo2);
+    //Serial.println(spo2);
     //Serial.print(" ");
     //current=millis();
   }
